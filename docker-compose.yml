@@ -1,0 +1,25 @@
+version: "3.1"
+
+services:
+  telegraf:
+    image: telegraf:latest
+    container_name: telegraf_arkanoid
+    network_mode: "host"
+    volumes:
+      - ./containers/telegraf_arkanoid.conf:/etc/telegraf/telegraf.conf:ro
+    depends_on:
+      - influxdb
+    ports:
+    - '127.0.0.1:8094:8094/udp'
+    
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb_arkanoid
+    restart: always
+    network_mode: "host"
+    volumes:
+      - ./containers/influxdb_arkanoid_storage:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=coordinates
+      - INFLUXDB_USER=telegraf
+      - INFLUXDB_USER_PASSWORD=telegraf 
